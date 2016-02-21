@@ -53,13 +53,25 @@
   NeoBundleLazy 'elzr/vim-json', {'autoload':{'filetypes':['json']}}
   NeoBundle 'tpope/vim-markdown'
   NeoBundle 'suan/vim-instant-markdown'
-" Swift
-  NeoBundle 'keith/swift.vim'
 " Typescript
   NeoBundle 'HerringtonDarkholme/yats.vim'
   NeoBundle 'Quramy/tsuquyomi'
   NeoBundle 'vim-scripts/applescript.vim'
+" Rust
+  NeoBundle 'phildawes/racer'
+  NeoBundle 'racer-rust/vim-racer'
+  NeoBundle 'rust-lang/rust.vim'
+
+"" Ruby Bundle
+  NeoBundle "tpope/vim-rails"
+  NeoBundle "tpope/vim-rake"
+  NeoBundle "tpope/vim-projectionist"
+  NeoBundle "thoughtbot/vim-rspec"
+  NeoBundle "majutsushi/tagbar"
+  NeoBundle "ecomba/vim-ruby-refactoring"
+
 " colorscheme & syntax highlighting
+
   NeoBundle 'mhartington/oceanic-next'
   NeoBundle 'Yggdroot/indentLine'
   NeoBundle 'myhere/vim-nodejs-complete'
@@ -70,8 +82,7 @@
   NeoBundle 'jreybert/vimagit'
   NeoBundle 'airblade/vim-gitgutter'
   NeoBundle 'Xuyuanp/nerdtree-git-plugin'
-" Need python 2 
-"  NeoBundle 'https://github.com/jaxbot/github-issues.vim'
+  NeoBundle 'https://github.com/jaxbot/github-issues.vim'
 " untils
   NeoBundle 'benekastah/neomake'
   NeoBundle 'editorconfig/editorconfig-vim'
@@ -86,6 +97,8 @@
   NeoBundle 'mattn/emmet-vim'
   NeoBundle 'Chiel92/vim-autoformat'
   NeoBundle 'gorodinskiy/vim-coloresque'
+  NeoBundle 'zorio/vim-python'
+  NeoBundle 'FuDesign2008/ToggleNumber.vim'
 " Shougo
   NeoBundle 'Shougo/unite.vim'
   NeoBundle 'Shougo/unite-outline'
@@ -111,10 +124,9 @@
 
   NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf' }
   NeoBundle 'junegunn/fzf.vim'
-" View image in vim , no need .
-  "  NeoBundle 'ashisha/image.vim'
+  NeoBundle 'ashisha/image.vim'
   NeoBundle 'mhinz/vim-sayonara'
-  NeoBundle 'xolox/vim-lua-ftplugin', {'depends': 'xolox/vim-misc'}
+  NeoBundle 'vim-lua-ftplugin', {'depends': 'xolox/vim-misc'}
   NeoBundle 'mattn/gist-vim', {'depends': 'mattn/webapi-vim'}
   NeoBundle 'terryma/vim-multiple-cursors'
   NeoBundle 'rhysd/github-complete.vim'
@@ -128,16 +140,8 @@
   " NeoBundle 'vim-scripts/XML-Folding'
   " NeoBundle 'Wildog/airline-weather.vim', {'depends': 'mattn/webapi-vim'}
   NeoBundle 'ruanyl/vim-fixmyjs'
- " Go lang
-  NeoBundle 'fatih/vim-go'
-  NeoBundle 'zchee/deoplete-go'
 
-  " Rust lang 
-  if $RUST_SRC_PATH != ""
-    NeoBundle 'rust-lang/rust.vim'
-    NeoBundle 'racer-rust/vim-racer'
-  endif
-  "NeoBundle 'ryanoasis/vim-devicons'
+  NeoBundle 'ryanoasis/vim-devicons'
   call neobundle#end()
 
 " Required:
@@ -161,7 +165,7 @@ if pluginsExist
   set noshowmode
   set noswapfile
   filetype on
-  set relativenumber number
+  "set relativenumber number
   set tabstop=2 shiftwidth=2 expandtab
   set conceallevel=0
 " block select not limited by shortest line
@@ -171,10 +175,6 @@ if pluginsExist
   "set colorcolumn=100
   set wrap linebreak nolist
   set wildmode=full
-"Mouse suppert 
-if has('mouse') | set mouse=a | endif
-
-
 " leader is ,
   let mapleader = ','
   set undofile
@@ -186,7 +186,8 @@ if has('mouse') | set mouse=a | endif
               \ endif
               " center buffer around cursor when opening files
   autocmd BufRead * normal zz
-
+  "set cursor underscore 
+  set guicursor+=n:hor20-Cursor/lCursor
   let g:jsx_ext_required = 0
   set complete=.,w,b,u,t,k
   let g:gitgutter_max_signs = 1000  " default value
@@ -203,17 +204,10 @@ if has('mouse') | set mouse=a | endif
   let g:indentLine_char='│'
   " enable deoplete
   let g:deoplete#enable_at_startup = 1
-  let g:deoplete#sources#go = 'vim-go'
 
 " }}}
 
 " System mappings  ----------------------------------------------------------{{{
-
-"bind to make 
-"
-if has('nvim')
-    nnoremap <leader>m :rightbelow vertical split <bar> :term swift % <cr>
-endif
 
 " No need for ex mode
   nnoremap Q <nop>
@@ -221,6 +215,10 @@ endif
   map q <Nop>
 " exit insert, dd line, enter insert
   inoremap <c-d> <esc>ddi
+" toggle line number both in normal and insert mode
+  let g:toggle_number_custom_keymap = 1
+  nnoremap <F3> :ToggleNumber<CR>
+
 " Navigate between display lines
   noremap  <silent> <Up>   gk
   noremap  <silent> <Down> gj
@@ -256,21 +254,17 @@ endif
   vnoremap <C-c> "*y<CR>
   vnoremap y "*y<CR>
   nnoremap Y "*Y<CR>
-  let g:multi_cursor_next_key='<C-n>'
-  let g:multi_cursor_prev_key='<C-p>'
-  let g:multi_cursor_skip_key='<C-x>'
-  let g:multi_cursor_quit_key='<Esc>'
-" " Copy to clipboard
+" Copy to clipboard
   vnoremap  <leader>y  "+y
   nnoremap  <leader>Y  "+yg_
   nnoremap  <leader>y  "+y
   nnoremap  <leader>yy  "+yy
 
-" " Paste from clipboard
-  nnoremap <leader>p "+p
-  nnoremap <leader>P "+P
-  vnoremap <leader>p "+p
-  vnoremap <leader>P "+P
+  let g:multi_cursor_next_key='<C-n>'
+  let g:multi_cursor_prev_key='<C-p>'
+  let g:multi_cursor_skip_key='<C-x>'
+  let g:multi_cursor_quit_key='<Esc>'
+
 " Align blocks of text and keep them selected
   vmap < <gv
   vmap > >gv
@@ -442,7 +436,102 @@ endif
                 \]
 "}}}
 
-" Emmet customization -------------------------------------------------------{{{
+" vim-python ----------------------------------------------------------------{{{
+
+  let g:python_host_prog = '/usr/bin/python2.7'
+  let g:python3_host_prog = '/usr/bin/python3.5'
+" }}}
+" Filetype specific settings ------------------------------------------------{{{
+
+au FileType gitcommit set tw=72
+autocmd BufNewFile,BufReadPost .bash_aliases* set filetype=sh
+autocmd BufNewFile,BufReadPost *.yml setl sw=2 ts=2
+autocmd BufNewFile,BufReadPost *.js setl sw=2 ts=2
+autocmd BufNewFile,BufReadPost *.coffee setl sw=2 ts=2
+autocmd BufNewFile,BufReadPost *.hbs setl sw=2 ts=2
+autocmd BufNewFile,BufReadPost *.html setl sw=2 ts=2
+autocmd BufNewFile,BufReadPost *.rb setl sw=2 ts=2
+autocmd BufNewFile,BufReadPost *.rs setl sw=4 ts=4 tw=100 cc=101
+autocmd BufNewFile,BufReadPost *.py setl sw=2 ts=2 tw=79 cc=80 nocindent
+autocmd BufNewFile,BufReadPost *.rs hi link rustCommentLineDoc Comment
+
+"新建.c,.h,.sh,.java文件，自动插入文件头 
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.java,*.py exec ":call SetTitle()" 
+""定义函数SetTitle，自动插入文件头 
+func SetTitle() 
+	"如果文件类型为.sh文件 
+	if &filetype == 'sh' 
+		call setline(1,"\#!/bin/bash") 
+		call append(line("."), "") 
+    elseif &filetype == 'python'
+        call setline(1,"#!~/.jumbo/bin/python")
+        call append(line("."),"# coding=utf-8")
+	    call append(line(".")+1, "") 
+
+    elseif &filetype == 'ruby'
+        call setline(1,"#!/usr/bin/env ruby")
+        call append(line("."),"# encoding: utf-8")
+	    call append(line(".")+1, "")
+	endif
+    if expand("%:e") == 'cc'
+		call append(line(".")+6, "#include<iostream>")
+		call append(line(".")+7, "using namespace std;")
+		call append(line(".")+8, "")
+	endif
+	if &filetype == 'c'
+		call append(line(".")+6, "#include<stdio.h>")
+		call append(line(".")+7, "")
+	endif
+	if expand("%:e") == 'h'
+		call append(line(".")+6, "#ifndef _".toupper(expand("%:r"))."_H")
+		call append(line(".")+7, "#define _".toupper(expand("%:r"))."_H")
+		call append(line(".")+8, "#endif")
+	endif
+	if &filetype == 'java'
+		call append(line(".")+6,"public class ".expand("%:r"))
+		call append(line(".")+7,"")
+	endif
+	"新建文件后，自动定位到文件末尾
+endfunc 
+"autocmd BufNewFile * normal G
+
+"}}}
+
+" Compile Run ----------------------------------------------------------------{{{
+    autocmd FileType swift  nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time swift  %<CR>        
+    autocmd FileType go     nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time go run  %<CR>        
+    autocmd FileType ruby   nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time ruby   %<CR>        
+    autocmd FileType python nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time python  %<CR>
+    autocmd FileType rust   nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time rustc --test -o %.test % && ./%.test<CR>%<CR>
+
+    "  autocmd FileType swift  nmap <F5> :call RunWith("swift  %")<cr>
+" }}}
+" Rust racer ----------------------------------------------------------------{{{
+  let g:racer_cmd = "racer"
+  let $RUST_SRC_PATH= "/home/zk/rust-src/rust/src"
+
+" Run cargo test and open output in new buffer
+command! Ctest call s:RunCargoTest()
+function! s:RunCargoTest()
+    let winnr = bufwinnr('^_cargo_test')
+    let curnr = bufwinnr('%')
+
+    if ( winnr >= 0 )
+        execute winnr . 'wincmd w'
+    else
+        vert new _cargo_test
+        set ft=cargo
+        setlocal buftype=nofile bufhidden=hide noswapfile nobuflisted
+    endif
+
+    execute 'normal ggdG'
+    read! cargo test --color=never
+    call cursor(1, 1)
+    execute curnr . 'wincmd w'
+endfunction
+nnoremap <silent> <F8> :silent :Ctest<CR>
+" }}}
+" Emmet custoo mization -------------------------------------------------------{{{
 " Enable Emmet in all modes
   let g:user_emmet_mode='a'
 " Remapping <C-y>, just doesn't cut it.
@@ -559,10 +648,7 @@ let g:unite_source_menu_menus.git = {
   set hidden
   let g:airline#extensions#tabline#fnamemod = ':t'
   let g:airline#extensions#tabline#show_tab_nr = 1
-  set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 1
-
   let g:airline_powerline_fonts = 1
-
   let g:airline_theme='oceanicnext'
   cnoreabbrev <expr> x getcmdtype() == ":" && getcmdline() == 'x' ? 'Sayonara' : 'x'
   tmap <leader>x <c-\><c-n>:bp! <BAR> bd! #<CR>
@@ -592,10 +678,7 @@ let g:unite_source_menu_menus.git = {
   nmap <leader>9 <Plug>AirlineSelectTab9
 "}}}
 
-" Linting -------------------------------------------------------------------{{{
-    
-  autocmd! BufWritePost * Neomake|:IndentLinesReset
-  let g:neomake_verbose = 0
+ " Linting -------------------------------------------------------------------{{{
 
 
   function! neomake#makers#ft#javascript#eslint()
@@ -606,7 +689,7 @@ let g:unite_source_menu_menus.git = {
           \ }
   endfunction
   let g:neomake_javascript_enabled_makers = ['eslint']
-  " autocmd! BufWritePost * Neomake
+  autocmd! BufWritePost * Neomake
   function! JscsFix()
       let l:winview = winsaveview()
       % ! jscs -x
@@ -614,78 +697,5 @@ let g:unite_source_menu_menus.git = {
   endfunction
   command JscsFix :call JscsFix()
   noremap <leader>j :JscsFix<CR>
-
-    " Neomake for Go lang  {{{
-    let g:neomake_go_goinstall_maker = {
-        \ 'exe': 'go',
-        \ 'args': ['install'],
-        \ 'append_file': 0,
-        \ 'errorformat':
-            \ '%W%f:%l: warning: %m,' .
-            \ '%E%f:%l:%c:%m,' .
-            \ '%E%f:%l:%m,' .
-            \ '%C%\s%\+%m,' .
-            \ '%-G#%.%#'
-        \}
-    "let g:neomake_go_enabled_makers = ['go', 'golint', 'govet', 'goinstall']
-    "}}}
-    " For rust  {{{
-  if $RUST_SRC_PATH != ""
-    " rust.vim
-    let g:rustfmt_autosave = 1
-    let g:rustfmt_command = 'rustfmt'
-
-    " vim-racer
-    set hidden
-    let g:racer_cmd = "racer"
-  endif
-  "}}}
 "}}}
-"
-
-" vim-go ---------------------------------------------------------------------{{{
-    let g:go_highlight_functions=1
-    let g:go_highlight_methods=1
-    let g:go_highlight_structs=1
-    let g:go_highlight_operators=1
-    let g:go_highlight_build_constraints=1
-    let g:go_fmt_command="goimports"
-    let g:go_fmt_autosave=1
-    autocmd FileType go :highlight goErr cterm=bold ctermfg=214
-    autocmd FileType go :match goErr /\<err\>/
-"}}} 
-" => Functions  {{{
-" Window movement shortcuts
-" move to the window in the direction shown, or create a new window
-function! WinMove(key)
-    let t:curwin = winnr()
-    exec "wincmd ".a:key
-    if (t:curwin == winnr())
-        if (match(a:key,'[jk]'))
-            wincmd v
-        else
-            wincmd s
-        endif
-        exec "wincmd ".a:key
-    endif
-endfunction
-
 endif
-
-
-function RunWith (command)
-    execute "w"
-    execute "!clear;time " . a:command . " " . expand("%") :term python %<cr>
-    "execute "term" . a:command . " " . expand("%")
-endfunction
-
-
-"}}}
-"Compile Run {{{
-    autocmd FileType swift  nmap <F5> :w<bar> :rightbelow vertical split <bar> :term swift  %<cr>        
-    autocmd FileType go     nmap <F5> :w<bar> :rightbelow vertical split <bar> :term go run  %<cr>        
-    autocmd FileType ruby   nmap <F5> :w<bar> :rightbelow vertical split <bar> :term ruby   %<cr>        
-    autocmd FileType python nmap <F5> :w<bar> :rightbelow vertical split <bar> :term python  %<cr>
-  "  autocmd FileType swift  nmap <F5> :call RunWith("swift  %")<cr>
-"}}}
-
