@@ -42,13 +42,14 @@
   " NeoBundle 'mxw/vim-jsx'
   NeoBundle 'othree/yajs.vim'
   NeoBundle 'othree/es.next.syntax.vim'
-
+  "NeoBundle 'Townk/vim-autoclose.vim'
+  NeoBundle  'jiangmiao/auto-pairs'
   NeoBundle '1995eaton/vim-better-javascript-completion'
   NeoBundleLazy 'kchmck/vim-coffee-script',  {'autoload':{'filetypes':['coffee']}}
   NeoBundle 'hail2u/vim-css3-syntax'
   NeoBundle 'moll/vim-node'
   NeoBundle 'burnettk/vim-angular'
-  " NeoBundle 'vim-scripts/SyntaxComplete'
+" NeoBundle 'vim-scripts/SyntaxComplete'
   NeoBundle 'othree/javascript-libraries-syntax.vim'
   NeoBundleLazy 'elzr/vim-json', {'autoload':{'filetypes':['json']}}
   NeoBundle 'tpope/vim-markdown'
@@ -99,7 +100,8 @@
   NeoBundle 'gorodinskiy/vim-coloresque'
   NeoBundle 'zorio/vim-python'
   NeoBundle 'FuDesign2008/ToggleNumber.vim'
-" Shougo
+  NeoBundle 'kassio/neoterm'
+  " Shougo
   NeoBundle 'Shougo/unite.vim'
   NeoBundle 'Shougo/unite-outline'
   NeoBundle 'ujihisa/unite-colorscheme'
@@ -161,6 +163,14 @@ if pluginsExist
   set clipboard+=unnamedplus
 " Currently needed for neovim paste issue
   set pastetoggle=<f6>
+
+" Open new horizontal splits on the bottom.
+  set splitbelow
+
+" Open new vertical splits on the right.
+  set splitright
+" Enable mouse use in all modes
+  set mouse=a
 " Let airline tell me my status
   set noshowmode
   set noswapfile
@@ -217,8 +227,9 @@ if pluginsExist
   inoremap <c-d> <esc>ddi
 " toggle line number both in normal and insert mode
   let g:toggle_number_custom_keymap = 1
-  nnoremap <F3> :ToggleNumber<CR>
-
+  nnoremap <F2> :ToggleNumber<CR>
+" Vertical terminate windows .
+  nnoremap <F4> :60 vsp term://zsh<CR>
 " Navigate between display lines
   noremap  <silent> <Up>   gk
   noremap  <silent> <Down> gj
@@ -274,6 +285,19 @@ if pluginsExist
   map <esc> :noh<cr>
   autocmd FileType typescript nmap <buffer> <Leader>T : <C-u>echo tsuquyomi#hint()<CR>
 
+" activate visual mode in normal mode
+  nmap <S-Up> V
+  nmap <S-Down> V
+" these are mapped in visual mode
+  vmap <S-Up> k
+  vmap <S-Down> j
+" 
+" etc...
+
+" autclose {}
+  "inoremap {<CR> {<CR>}<C-o>O
+
+" similarly <S-Left>, <S-Right> for v
   nnoremap <leader>e :call <SID>SynStack()<CR>
   function! <SID>SynStack()
     if !exists("*synstack")
@@ -370,7 +394,7 @@ if pluginsExist
 
 " NERDTree ------------------------------------------------------------------{{{
 
-  map <C-\> :NERDTreeToggle<CR>
+  map <F7> :NERDTreeToggle<CR>
   autocmd StdinReadPre * let s:std_in=1
   " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
   let NERDTreeShowHidden=1
@@ -417,6 +441,40 @@ if pluginsExist
   \: "\<TAB>"
 
 "}}}
+
+"Neoterm config -------------------------------------------------------------{{{
+let g:neoterm_position = 'vertical'
+let g:neoterm_automap_keys = ',tt'
+
+nnoremap <silent> <f10> :TREPLSendFile<cr>
+nnoremap <silent> <f9> :TREPLSend<cr>
+vnoremap <silent> <f9> :TREPLSend<cr>
+
+" run set test lib
+nnoremap <silent> ,rt :call neoterm#test#run('all')<cr>
+nnoremap <silent> ,rf :call neoterm#test#run('file')<cr>
+nnoremap <silent> ,rn :call neoterm#test#run('current')<cr>
+nnoremap <silent> ,rr :call neoterm#test#rerun()<cr>
+
+" Useful maps
+" hide/close terminal
+nnoremap <silent> ,th :call neoterm#close()<cr>
+" clear terminal
+nnoremap <silent> ,tl :call neoterm#clear()<cr>
+" kills the current job (send a <c-c>)
+nnoremap <silent> ,tc :call neoterm#kill()<cr>
+
+" Rails commands
+command! Troutes :T rake routes
+command! -nargs=+ Troute :T rake routes | grep <args>
+command! Tmigrate :T rake db:migrate
+
+" Git commands
+command! -nargs=+ Tg :T git <args>
+
+"---}}} 
+
+
 
 " Typescript & Javscript omni complete --------------------------------------{{{
   let g:vimjs#casesensistive = 1
@@ -502,13 +560,14 @@ endfunc
     autocmd FileType go     nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time go run  %<CR>        
     autocmd FileType ruby   nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time ruby   %<CR>        
     autocmd FileType python nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time python  %<CR>
-    autocmd FileType rust   nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time rustc --test -o %.test % && ./%.test<CR>%<CR>
+    autocmd FileType rust   nmap <F5> <ESC>:w<bar> :rightbelow vertical split <bar> :term time cargo run  %<CR>
 
     "  autocmd FileType swift  nmap <F5> :call RunWith("swift  %")<cr>
 " }}}
 " Rust racer ----------------------------------------------------------------{{{
   let g:racer_cmd = "racer"
   let $RUST_SRC_PATH= "/home/zk/rust-src/rust/src"
+  let g:racer_experimental_completer = 1
 
 " Run cargo test and open output in new buffer
 command! Ctest call s:RunCargoTest()
@@ -629,18 +688,113 @@ let g:unite_source_menu_menus.git = {
 "   map <leader>l :Lines<CR>
 "}}}
 
-" Navigate between vim buffers and tmux panels ------------------------------{{{
-  let g:tmux_navigator_no_mappings = 1
-  nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
-  nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
-  nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
-  nnoremap <silent> <C-h> :TmuxNavigateLeft<CR>
-  nnoremap <silent> <C-;> :TmuxNavigatePrevious<cr>
-  tmap <C-j> <C-\><C-n>:TmuxNavigateDown<cr>
-  tmap <C-k> <C-\><C-n>:TmuxNavigateUp<cr>
-  tmap <C-l> <C-\><C-n>:TmuxNavigateRight<cr>
-  tmap <C-h> <C-\><C-n>:TmuxNavigateLeft<CR>
-  tmap <C-;> <C-\><C-n>:TmuxNavigatePrevious<cr>
+" Use windows  terminate.------------------------------------------------------{{{
+" terminal emulator
+"""""""""""""""
+"tnoremap <Esc> <C-\><C-n>
+
+" Move between windows
+tnoremap <A-h> <C-\><C-n><C-w>h
+tnoremap <A-j> <C-\><C-n><C-w>j
+tnoremap <A-k> <C-\><C-n><C-w>k
+tnoremap <A-l> <C-\><C-n><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+
+
+" TERMINAL AND NEOTERM
+nnoremap <F3> :call ToggleInsertTerminal()<CR>
+inoremap <F3> <ESC>:call ToggleInsertTerminal()<CR>
+tnoremap <F3> <C-\><C-n>:call ToggleInsertTerminal()<CR>
+nnoremap  <F4> :call Ttoggle()<CR>
+tnoremap  <F4> <C-\><C-n>:call Ttoggle()<CR>
+
+let s:neoterm_is_open=0
+function! Ttoggle()
+    if s:neoterm_is_open
+        Tclose
+        let s:neoterm_is_open=0
+    else
+        Topen
+        let s:neoterm_is_open=1
+    endif
+endfunction
+
+let s:prev_window=-1
+function! ToggleInsertTerminal()
+    if s:neoterm_is_open == 0
+        call Ttoggle()
+    endif
+
+    if s:prev_window == -1
+        let s:prev_window=winnr()
+        exec bufwinnr(g:neoterm.last().buffer_id) . "wincmd w"
+        startinsert
+    else
+        exec s:prev_window . "wincmd w"
+        let s:prev_window=-1
+    endif
+endfunction
+
+" neoterm
+let g:neoterm_size = '60'
+
+abbreviate E' È
+abbreviate ~' `
+
+" Handle insert mode when entering the buffer. 
+:au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+
+
+
+
+" Window split settings
+" F12 switch 
+
+highlight TermCursor ctermfg=red guifg=red
+"set splitbelow
+"set splitright
+
+" Terminal settings
+tnoremap <Leader><ESC> <C-\><C-n>
+tnoremap q  bd!
+" Window navigation function
+" Make ctrl-h/j/k/l move between windows and auto-insert in terminals
+func! s:mapMoveToWindowInDirection(direction)
+    func! s:maybeInsertMode(direction)
+        stopinsert
+        execute "wincmd" a:direction
+
+        if &buftype == 'terminal'
+            startinsert!
+        endif
+    endfunc
+
+    execute "tnoremap" "<silent>" "<C-" . a:direction . ">"
+                \ "<C-\\><C-n>"
+                \ ":call <SID>maybeInsertMode(\"" . a:direction . "\")<CR>"
+    execute "nnoremap" "<silent>" "<C-" . a:direction . ">"
+                \ ":call <SID>maybeInsertMode(\"" . a:direction . "\")<CR>"
+endfunc
+for dir in ["h", "j", "l", "k"]
+    call s:mapMoveToWindowInDirection(dir)
+endfor
+ "}}}
+
+" Not used to use terminate.  Navigate between vim buffers and tmux panels ------------------------------{{{
+  "let g:tmux_navigator_no_mappings = 1
+  "nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
+  "nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
+  "nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+  "nnoremap <silent> <C-h> :TmuxNavigateLeft<CR>
+  "nnoremap <silent> <C-;> :TmuxNavigatePrevious<cr>
+  "tmap <C-j> <C-\><C-n>:TmuxNavigateDown<cr>
+  "tmap <C-k> <C-\><C-n>:TmuxNavigateUp<cr>
+  "tmap <C-l> <C-\><C-n>:TmuxNavigateRight<cr>
+  "tmap <C-h> <C-\><C-n>:TmuxNavigateLeft<CR>
+  "tmap <C-;> <C-\><C-n>:TmuxNavigatePrevious<cr>
 "}}}
 
 " vim-airline ---------------------------------------------------------------{{{
@@ -698,4 +852,34 @@ let g:unite_source_menu_menus.git = {
   command JscsFix :call JscsFix()
   noremap <leader>j :JscsFix<CR>
 "}}}
+
+" My function  ---------------------------------------------------------------{{{ 
+
+" Workspace Setup
+" ----------------
+function! DefaultWorkspace()
+    " Rough num columns to decide between laptop and big monitor screens
+    let numcol = 2
+    if winwidth(0) >= 220
+        let numcol = 3
+    endif
+
+    if numcol == 3
+        e term://zsh
+        file Shell\ Two
+        vnew
+    endif
+
+    vsp term: //~/27000:/bin/zsh
+    file Context
+    sp term://zsh
+    file Shell\ One
+    wincmd k
+    resize 4
+    wincmd h
+endfunction
+command! -register DefaultWorkspace call DefaultWorkspace()
+
+" }}}
 endif
+
