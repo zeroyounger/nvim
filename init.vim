@@ -230,6 +230,9 @@ if pluginsExist
   nnoremap <F2> :ToggleNumber<CR>
 " Vertical terminate windows .
   nnoremap <F4> :60 vsp term://zsh<CR>
+" Double-click highlighting all occurrences of a word 
+  map <2-LeftMouse> *
+  imap <2-LeftMouse> <c-o>*
 " Navigate between display lines
   noremap  <silent> <Up>   gk
   noremap  <silent> <Down> gj
