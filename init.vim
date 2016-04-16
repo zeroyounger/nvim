@@ -223,11 +223,13 @@ if pluginsExist
   nnoremap Q <nop>
 " recording macros is not my thing
   map q <Nop>
+" Save file use F2 key.
+  map <F2> :w! <CR>
 " exit insert, dd line, enter insert
   inoremap <c-d> <esc>ddi
 " toggle line number both in normal and insert mode
   let g:toggle_number_custom_keymap = 1
-  nnoremap <F2> :ToggleNumber<CR>
+  nnoremap <F11> :ToggleNumber<CR>
 " Vertical terminate windows .
   nnoremap <F4> :60 vsp term://zsh<CR>
 " Double-click highlighting all occurrences of a word 
