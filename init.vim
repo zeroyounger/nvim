@@ -43,7 +43,8 @@
   NeoBundle 'othree/yajs.vim'
   NeoBundle 'othree/es.next.syntax.vim'
   "NeoBundle 'Townk/vim-autoclose.vim'
-  NeoBundle  'jiangmiao/auto-pairs'
+  "NeoBundle  'jiangmiao/auto-pairs'
+  NeoBundle  'greister/auto-pairs'
   NeoBundle '1995eaton/vim-better-javascript-completion'
   NeoBundleLazy 'kchmck/vim-coffee-script',  {'autoload':{'filetypes':['coffee']}}
   NeoBundle 'hail2u/vim-css3-syntax'
@@ -76,7 +77,6 @@
   NeoBundle 'mhartington/oceanic-next'
   NeoBundle 'Yggdroot/indentLine'
   NeoBundle 'myhere/vim-nodejs-complete'
-  NeoBundle 'Raimondi/delimitMate'
   NeoBundle 'valloric/MatchTagAlways'
  " Git helpers
   NeoBundle 'tpope/vim-fugitive'
@@ -89,9 +89,9 @@
   NeoBundle 'editorconfig/editorconfig-vim'
   NeoBundle 'scrooloose/nerdtree'
   NeoBundle 'AndrewRadev/switch.vim'
-  NeoBundle 'christoomey/vim-tmux-navigator'
-  NeoBundle 'tmux-plugins/vim-tmux'
-  NeoBundle 'tmux-plugins/vim-tmux-focus-events'
+  "NeoBundle 'christoomey/vim-tmux-navigator'
+  "NeoBundle 'tmux-plugins/vim-tmux'
+  "NeoBundle 'tmux-plugins/vim-tmux-focus-events'
   NeoBundle 'vim-airline/vim-airline'
   NeoBundle 'tpope/vim-surround'
   NeoBundle 'tomtom/tcomment_vim'
@@ -229,7 +229,7 @@ if pluginsExist
   inoremap <c-d> <esc>ddi
 " toggle line number both in normal and insert mode
   let g:toggle_number_custom_keymap = 1
-  nnoremap <F11> :ToggleNumber<CR>
+  nnoremap <F6> :ToggleNumber<CR>
 " Vertical terminate windows .
   nnoremap <F4> :60 vsp term://zsh<CR>
 " Double-click highlighting all occurrences of a word 
@@ -263,6 +263,10 @@ if pluginsExist
 " Plus what does ; do anyways??
 " if you do have a plugin that needs ;, you can just wap the mapping
 " nnoremap : ;
+" Select all text
+  nmap <C-a> ggVG
+" Copyt to 'clipboard '
+  vmap <C-c> "*y
 " give it a try and you will like it
   nnoremap ; :
   inoremap <c-f> <c-x><c-f>
