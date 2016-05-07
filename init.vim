@@ -37,28 +37,45 @@
   NeoBundleFetch 'Shougo/neobundle.vim'
 
 " syntax
-  " NeoBundle 'pangloss/vim-javascript'
+    NeoBundle  'greister/auto-pairs' 
+"javascript
+    " NeoBundle 'pangloss/vim-javascript'
   " NeoBundle 'jelera/vim-javascript-syntax'
   " NeoBundle 'mxw/vim-jsx'
-  NeoBundle 'othree/yajs.vim'
-  NeoBundle 'othree/es.next.syntax.vim'
+  "NeoBundle 'othree/yajs.vim'
+  "NeoBundle 'othree/es.next.syntax.vim'
   "NeoBundle 'Townk/vim-autoclose.vim'
   "NeoBundle  'jiangmiao/auto-pairs'
-  NeoBundle  'greister/auto-pairs'
-  NeoBundle '1995eaton/vim-better-javascript-completion'
-  NeoBundleLazy 'kchmck/vim-coffee-script',  {'autoload':{'filetypes':['coffee']}}
-  NeoBundle 'hail2u/vim-css3-syntax'
+  "NeoBundle '1995eaton/vim-better-javascript-completion'
+  "NeoBundleLazy 'kchmck/vim-coffee-script',  {'autoload':{'filetypes':['coffee']}}
+  "NeoBundle 'hail2u/vim-css3-syntax'
   NeoBundle 'moll/vim-node'
   NeoBundle 'burnettk/vim-angular'
 " NeoBundle 'vim-scripts/SyntaxComplete'
-  NeoBundle 'othree/javascript-libraries-syntax.vim'
-  NeoBundleLazy 'elzr/vim-json', {'autoload':{'filetypes':['json']}}
-  NeoBundle 'tpope/vim-markdown'
-  NeoBundle 'suan/vim-instant-markdown'
+  "NeoBundle 'othree/javascript-libraries-syntax.vim'
+  "NeoBundleLazy 'elzr/vim-json', {'autoload':{'filetypes':['json']}}
+" MarkDown I changed.
+  
+  "NeoBundle 'tpope/vim-markdown'
+  NeoBundle 'godlygeek/tabular'
+  NeoBundle 'plasticboy/vim-markdown'
+  "gx: open the link under the cursor in the same browser as the standard gx command. 
+  "]]: go to next header. <Plug>Markdown_MoveToNextHeader
+
+  "[[: go to previous header. Contrast with ]c. <Plug>Markdown_MoveToPreviousHeader
+
+  "][: go to next sibling header if any. <Plug>Markdown_MoveToNextSiblingHeader
+
+  "[]: go to previous sibling header if any. <Plug>Markdown_MoveToPreviousSiblingHeader
+
+  "]c: go to Current header. <Plug>Markdown_MoveToCurHeader
+
+  "]u: go to parent header (Up). <Plug>Markdown_MoveToParentHeader
+  "NeoBundle 'suan/vim-instant-markdown'
 " Typescript
-  NeoBundle 'HerringtonDarkholme/yats.vim'
-  NeoBundle 'Quramy/tsuquyomi'
-  NeoBundle 'vim-scripts/applescript.vim'
+  "NeoBundle 'HerringtonDarkholme/yats.vim'
+  "NeoBundle 'Quramy/tsuquyomi'
+  "NeoBundle 'vim-scripts/applescript.vim'
 " Rust
   NeoBundle 'phildawes/racer'
   NeoBundle 'racer-rust/vim-racer'
@@ -98,6 +115,8 @@
   NeoBundle 'mattn/emmet-vim'
   NeoBundle 'Chiel92/vim-autoformat'
   NeoBundle 'gorodinskiy/vim-coloresque'
+  
+  " Python has a error.
   NeoBundle 'zorio/vim-python'
   NeoBundle 'FuDesign2008/ToggleNumber.vim'
   NeoBundle 'kassio/neoterm'
@@ -118,7 +137,8 @@
   NeoBundle 'Shougo/deoplete.nvim'
   NeoBundle 'Shougo/neco-vim'
   NeoBundle 'Shougo/neoinclude.vim'
-  NeoBundleLazy 'ujihisa/neco-look',{'autoload':{'filetypes':['markdown']}}
+"A neocomplcache plugin for `/usr/bin/look` for completing English.
+  "NeoBundleLazy 'ujihisa/neco-look',{'autoload':{'filetypes':['markdown']}}
   NeoBundle 'Shougo/neosnippet.vim'
   NeoBundle 'Shougo/neosnippet-snippets'
   NeoBundle 'honza/vim-snippets'
@@ -215,6 +235,8 @@ if pluginsExist
   " enable deoplete
   let g:deoplete#enable_at_startup = 1
 
+" set gist config 
+  let g:gist_use_password_in_gitconfig = 1
 " }}}
 
 " System mappings  ----------------------------------------------------------{{{
@@ -333,7 +355,7 @@ if pluginsExist
 " no need to fold things in markdown all the time
   let g:vim_markdown_folding_disabled = 1
 " turn on spelling for markdown files
-  autocmd BufRead,BufNewFile *.md setlocal spell complete+=kspell
+  "autocmd BufRead,BufNewFile *.md setlocal spell complete+=kspell
 " highlight bad words in red
   hi SpellBad guibg=#ff2929 guifg=#ffffff" ctermbg=224
 " disable markdown auto-preview. Gets annoying
@@ -768,7 +790,7 @@ highlight TermCursor ctermfg=red guifg=red
 
 " Terminal settings
 tnoremap <Leader><ESC> <C-\><C-n>
-tnoremap q  bd!
+"tnoremap q  bd!
 " Window navigation function
 " Make ctrl-h/j/k/l move between windows and auto-insert in terminals
 func! s:mapMoveToWindowInDirection(direction)
